@@ -85,6 +85,7 @@ const products = [
   },
 ];
 
+// display each product by destructing each object in the array of objects from products
 products.forEach(({ name, id, price, category }) => {
   dessertCards.innerHTML += `
       <div class="dessert-card">
@@ -99,18 +100,24 @@ products.forEach(({ name, id, price, category }) => {
     `;
 });
 
-// declare class
+// declare shopping cart class
 class ShoppingCart {
+  // shopping cart properties
   constructor() {
     this.items = [];
     this.total = 0;
     this.taxRate = 8.25;
   }
 
+  //
+  // shopping cart methods
+  //
+
+  // this method adds an item to the cart
   addItem(id, products) {
-    const product = products.find((item) => item.id === id);
+    const product = products.find((item) => item.id === id);  // finds the project by using the find method and checkinf for the id
     const { name, price } = product;
-    this.items.push(product);
+    this.items.push(product); // pushing the product into items property that was initalized as an array
 
     const totalCountPerProduct = {};
     this.items.forEach((dessert) => {
@@ -123,6 +130,7 @@ class ShoppingCart {
       `product-count-for-id${id}`
     );
 
+    // this ternary operator will display html based on the current number of products in the items array
     currentProductCount > 1
       ? (currentProductCountSpan.textContent = `${currentProductCount}x`)
       : (productsContainer.innerHTML += `
@@ -135,11 +143,14 @@ class ShoppingCart {
       `);
   }
 
+  // this method gets the number of items in the cart by using the length method for strings
   getCounts() {
     return this.items.length;
   }
 
+  // this method clears the contents of the cart
   clearCart() {
+    // check if the cart is already empty
     if (!this.items.length) {
       alert('Your shopping cart is already empty');
       return;
@@ -149,6 +160,7 @@ class ShoppingCart {
       'Are you sure you want to clear all items from your shopping cart?'
     );
 
+    // clear all the contents in the cart 
     if (isCartCleared) {
       this.items = [];
       this.total = 0;
@@ -160,14 +172,20 @@ class ShoppingCart {
     }
   }
 
+  // this function takes in the parameter 'amount' and calculates the taxes
+  // we use the toFixed method to fix the number to '2' decimal places (at this part the value is a string)
+  // we use the parse float method to convert everything into an float and then return it
   calculateTaxes(amount) {
     return parseFloat(((this.taxRate / 100) * amount).toFixed(2));
   }
 
+  // this function calculates the total price of the items in the cart
   calculateTotal() {
-    const subTotal = this.items.reduce((total, item) => total + item.price, 0);
-    const tax = this.calculateTaxes(subTotal);
+    const subTotal = this.items.reduce((total, item) => total + item.price, 0);  // loop through items and sum the total price using reduce method
+    const tax = this.calculateTaxes(subTotal);  // call calculateTaxes method
     this.total = subTotal + tax;
+    // update text content with new values
+    // fix all of the values to 2 decimal places
     cartSubTotal.textContent = `$${subTotal.toFixed(2)}`;
     cartTaxes.textContent = `$${tax.toFixed(2)}`;
     cartTotal.textContent = `$${this.total.toFixed(2)}`;
@@ -178,6 +196,9 @@ class ShoppingCart {
 const cart = new ShoppingCart();
 const addToCartBtns = document.getElementsByClassName('add-to-cart-btn');
 
+// use the spread operator to copy each add-to-cart-btn into an array
+// then apply the for each method to loop through each button and display the total number of items
+// then we call the calculate total method to calculate the total price of the cart
 [...addToCartBtns].forEach((btn) => {
   btn.addEventListener('click', (event) => {
     cart.addItem(Number(event.target.id), products);
@@ -186,6 +207,7 @@ const addToCartBtns = document.getElementsByClassName('add-to-cart-btn');
   });
 });
 
+// logic for displaying the cart when clicked
 cartBtn.addEventListener('click', () => {
   isCartShowing = !isCartShowing;
   showHideCartSpan.textContent = isCartShowing ? 'Hide' : 'Show';
